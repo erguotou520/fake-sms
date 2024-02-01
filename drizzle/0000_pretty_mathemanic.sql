@@ -5,7 +5,7 @@ CREATE TABLE `apps` (
 	`name` text,
 	`app_id` text NOT NULL,
 	`app_secret` text NOT NULL,
-	`creator_id` integer NOT NULL,
+	`creator_id` text NOT NULL,
 	FOREIGN KEY (`creator_id`) REFERENCES `users`(`id`) ON UPDATE no action ON DELETE no action
 );
 --> statement-breakpoint
@@ -15,7 +15,7 @@ CREATE TABLE `message_templates` (
 	`updated_at` text DEFAULT (datetime('now', 'localtime')),
 	`code` text NOT NULL,
 	`message` text NOT NULL,
-	`app_id` integer NOT NULL,
+	`app_id` text NOT NULL,
 	FOREIGN KEY (`app_id`) REFERENCES `apps`(`id`) ON UPDATE no action ON DELETE no action
 );
 --> statement-breakpoint
@@ -38,6 +38,5 @@ CREATE TABLE `users` (
 	`hashed_password` text NOT NULL
 );
 --> statement-breakpoint
-CREATE UNIQUE INDEX `apps_app_id_unique` ON `apps` (`app_id`);--> statement-breakpoint
-CREATE UNIQUE INDEX `apps_app_secret_unique` ON `apps` (`app_secret`);--> statement-breakpoint
+CREATE UNIQUE INDEX `apps_app_id_app_secret_unique` ON `apps` (`app_id`,`app_secret`);--> statement-breakpoint
 CREATE UNIQUE INDEX `users_username_unique` ON `users` (`username`);

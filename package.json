@@ -11,6 +11,10 @@
     "start": "bun run src/index.ts"
   },
   "dependencies": {
+    "@elysiajs/bearer": "^0.8.0",
+    "@elysiajs/jwt": "^0.8.0",
+    "@elysiajs/static": "^0.8.1",
+    "@elysiajs/swagger": "^0.8.5",
     "@lukeed/uuid": "^2.0.1",
     "drizzle-orm": "^0.29.3",
     "elysia": "^0.8.15",
