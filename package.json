@@ -1,0 +1,31 @@
+{
+  "name": "fake-sms",
+  "type": "module",
+  "module": "src/index.ts",
+  "scripts": {
+    "format": "biome check --apply .",
+    "migrate": "bun run src/migrate.ts",
+    "oxlint": "oxlint .",
+    "schema": "bunx drizzle-kit generate:sqlite --schema ./src/schema.ts",
+    "seed": "bun run src/seed.ts",
+    "start": "bun run src/index.ts"
+  },
+  "dependencies": {
+    "@lukeed/uuid": "^2.0.1",
+    "drizzle-orm": "^0.29.3",
+    "elysia": "^0.8.15",
+    "oxlint": "^0.2.6"
+  },
+  "devDependencies": {
+    "@biomejs/biome": "^1.5.3",
+    "@types/bun": "latest",
+    "drizzle-kit": "^0.20.13"
+  },
+  "peerDependencies": {
+    "typescript": "^5.0.0"
+  },
+  "engines": {
+    "node": ">=10.0.0",
+    "bun": ">1.0.0"
+  }
+}

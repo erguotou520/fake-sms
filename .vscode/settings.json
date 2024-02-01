@@ -1,0 +1,11 @@
+{
+  "sqltools.connections": [
+    {
+      "previewLimit": 50,
+      "driver": "SQLite",
+      "name": "fake-sms",
+      "database": "${workspaceFolder:fake-sms}/db/sqlite.db"
+    }
+  ],
+  "sqltools.useNodeRuntime": true
+}
