@@ -18,22 +18,32 @@ export async function addAppRoutes(path: string, server: APIGroupServerType) {
     return ret
   }, {
     query: t.Object({
-      offset: t.Nullable(t.Number()),
-      limit: t.Nullable(t.Number())
+      offset: t.Optional(t.Number()),
+      limit: t.Optional(t.Number())
     })
   })
 
   // create a new app
   server.post(path, async ({ body, bearer, jwt, set }) => {
     const user = await jwt.verify(bearer) as UserClaims
+    const sameApp = await db.query.apps.findFirst({
+      where: and(eq(apps.name, body.name), eq(apps.creatorId, user.id))
+    })
+    if (sameApp) {
+      set.status = 400
+      return 'App already exists'
+    }
     try {
-      await db.insert(apps).values([{
+      const ret = await db.insert(apps).values([{
         name: body.name,
         creatorId: user.id,
         appId: generateAppId(),
         appSecret: generateSecret()
-      }])
-      return true
+      }]).returning()
+      if (ret.length > 0) {
+        return ret[0]
+      }
+      return false
     } catch (error) {
       set.status = 400
       return 'Failed to create app'
@@ -48,14 +58,14 @@ export async function addAppRoutes(path: string, server: APIGroupServerType) {
   server.delete(`${path}/:id`, async ({ params, bearer, jwt, set }) => {
     const user = await jwt.verify(bearer) as UserClaims
     const app = await db.query.apps.findFirst({
-      where: and( eq(apps.id, params.id), eq(apps.creatorId, user.id))
+      where: and(eq(apps.id, params.id), eq(apps.creatorId, user.id))
     })
     if (!app) {
       return 'App not found'
     }
     try {
-      await db.delete(apps).where(eq(apps.id, params.id))
-      return true
+      const ret = await db.delete(apps).where(eq(apps.id, params.id)).returning()
+      return ret.length > 0
     } catch (error) {
       set.status = 500
       return 'Failed to delete app'

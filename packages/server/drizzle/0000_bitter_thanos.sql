@@ -23,7 +23,7 @@ CREATE TABLE `push_histories` (
 	`id` text PRIMARY KEY NOT NULL,
 	`created_at` text DEFAULT (datetime('now', 'localtime')),
 	`updated_at` text DEFAULT (datetime('now', 'localtime')),
-	`template_id` integer NOT NULL,
+	`template_id` text NOT NULL,
 	`phone` text NOT NULL,
 	`params` text,
 	FOREIGN KEY (`template_id`) REFERENCES `message_templates`(`id`) ON UPDATE no action ON DELETE no action

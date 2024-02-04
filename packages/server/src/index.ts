@@ -8,7 +8,7 @@ import registerRoutes from './routes'
 const port = process.env.PORT || 7878
 const server = new Elysia()
   .use(swagger())
-  .use(staticPlugin({ assets: 'html' }))
+  .use(staticPlugin({ assets: 'html', prefix: '' }))
   .use(bearer())
   .use(jwt({
     name: 'jwt',

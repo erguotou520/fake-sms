@@ -1,31 +1,33 @@
 import { db } from "@/db";
-import { apps, messageTemplates } from "@/schema";
+import { apps, messageTemplates, users } from "@/schema";
 import type { UserClaims } from "@/types";
-import { generateAppId, generateSecret } from "@/utils/app";
-import { and, eq } from "drizzle-orm";
+import { DEFAULT_LIMIT } from "@/utils";
+import { and, desc, eq } from "drizzle-orm";
 import { t } from "elysia";
 import type { APIGroupServerType } from "..";
 
 export async function addTemplateRoutes(path: string, server: APIGroupServerType) {
   // get all templates created by the user & in the given app
-  server.get(path, async ({ query, params, bearer, jwt }) => {
+  server.get(path, async ({ query, params, bearer, jwt, set }) => {
     const user = await jwt.verify(bearer) as UserClaims
-    const app = await db.query.apps.findFirst({
+    const appRecord = await db.query.apps.findFirst({
       where: and(eq(apps.id, params.appId), eq(apps.creatorId, user.id))
     })
-    if (!app) {
+    if (!appRecord) {
+      set.status = 404
       return 'App not found'
     }
-    const ret = await db.query.messageTemplates.findMany({
-      where: eq(messageTemplates.appId, params.appId),
-      offset: query.offset ?? 0,
-      limit: query.limit ?? 10
+    const templates = await db.query.messageTemplates.findMany({
+      where: and(eq(messageTemplates.appId, params.appId)),
+      orderBy: [desc(messageTemplates.createdAt)],
+      offset: query.offset || 0,
+      limit: query.limit || DEFAULT_LIMIT
     })
-    return ret
+    return templates
   }, {
     query: t.Object({
-      offset: t.Nullable(t.Number()),
-      limit: t.Nullable(t.Number())
+      offset: t.Optional(t.Number()),
+      limit: t.Optional(t.Number())
     }),
     params: t.Object({
       appId: t.String()
@@ -42,12 +44,12 @@ export async function addTemplateRoutes(path: string, server: APIGroupServerType
       return 'App not found'
     }
     try {
-      await db.insert(messageTemplates).values([{
+      const ret = await db.insert(messageTemplates).values([{
         appId: params.appId,
         code: body.code,
         message: body.message,
-      }])
-      return true
+      }]).returning()
+      return ret.length > 0
     } catch (error) {
       set.status = 400
       return 'Failed to create template message'
@@ -65,18 +67,24 @@ export async function addTemplateRoutes(path: string, server: APIGroupServerType
   // delete an template message
   server.delete(`${path}/:id`, async ({ params, bearer, jwt, set }) => {
     const user = await jwt.verify(bearer) as UserClaims
-    const app = await db.query.apps.findFirst({
-      where: and(eq(apps.id, params.id), eq(apps.creatorId, user.id))
+    const appRecord = await db.query.apps.findFirst({
+      where: and(eq(apps.id, params.appId), eq(apps.creatorId, user.id))
     })
-    if (!app) {
+    if (!appRecord) {
+      set.status = 404
       return 'App not found'
     }
     try {
-      await db.delete(apps).where(eq(apps.id, params.id))
-      return true
+      const ret = await db.delete(messageTemplates).where(eq(messageTemplates.id, params.id)).returning()
+      return ret.length > 0
     } catch (error) {
       set.status = 500
       return 'Failed to delete app'
     }
+  }, {
+    params: t.Object({
+      appId: t.String(),
+      id: t.String()
+    })
   })
 }

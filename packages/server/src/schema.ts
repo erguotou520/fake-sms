@@ -1,5 +1,5 @@
 import { v4 } from '@lukeed/uuid/secure'
-import { sql } from "drizzle-orm";
+import { relations, sql } from "drizzle-orm";
 import { integer, sqliteTable, text, unique } from "drizzle-orm/sqlite-core";
 
 function genUUID() {
@@ -40,7 +40,35 @@ export const messageTemplates = sqliteTable('message_templates', {
 
 export const pushHistories = sqliteTable('push_histories', {
   ...commonColumns(),
-  templateId: integer('template_id').notNull().references(() => messageTemplates.id),
+  templateId: text('template_id').notNull().references(() => messageTemplates.id),
   phone: text('phone').notNull(),
-  params: text('params')
+  params: text('params'),
+  text: text('text'),
 })
+
+export const usersRelations = relations(users, ({ many }) => ({
+  apps: many(apps)
+}))
+
+export const appsRelations = relations(apps, ({ one, many }) => ({
+  creator: one(users, {
+    fields: [apps.creatorId],
+    references: [users.id]
+  }),
+  messageTemplates: many(messageTemplates)
+}))
+
+export const messageTemplatesRelations = relations(messageTemplates, ({ one, many }) => ({
+  app: one(apps, {
+    fields: [messageTemplates.appId],
+    references: [apps.id]
+  }),
+  pushHistories: many(pushHistories)
+}))
+
+export const pushHistoriesRelations = relations(pushHistories, ({ one }) => ({
+  template: one(messageTemplates, {
+    fields: [pushHistories.templateId],
+    references: [messageTemplates.id]
+  })
+}))

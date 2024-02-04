@@ -9,10 +9,10 @@ export function randomString(length: number): string {
 
 export function generateAppId(): string {
   // generate a random string as app id
-  return randomString(16);
+  return randomString(32);
 }
 
 export function generateSecret(): string {
   // generate a random string as secret
-  return randomString(32);
+  return randomString(64);
 }

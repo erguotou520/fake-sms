@@ -1,8 +1,8 @@
 {
   "version": "5",
   "dialect": "sqlite",
-  "id": "6ba60a97-d3da-4457-a297-4f558f9e7135",
-  "prevId": "00000000-0000-0000-0000-000000000000",
+  "id": "9dc64c9c-ba2b-403b-9ed8-55e27b6e9c84",
+  "prevId": "6ba60a97-d3da-4457-a297-4f558f9e7135",
   "tables": {
     "apps": {
       "name": "apps",
@@ -196,6 +196,13 @@
         },
         "params": {
           "name": "params",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false,
+          "autoincrement": false
+        },
+        "text": {
+          "name": "text",
           "type": "text",
           "primaryKey": false,
           "notNull": false,
