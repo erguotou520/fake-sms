@@ -3,7 +3,7 @@ import { jwt } from '@elysiajs/jwt'
 import { staticPlugin } from '@elysiajs/static'
 import { swagger } from '@elysiajs/swagger'
 import { Elysia } from 'elysia'
-import registerRoutes from './routes'
+import {registerAPIRoutes, registerWebsocketRoutes} from './routes'
 
 const port = process.env.PORT || 7878
 const server = new Elysia()
@@ -14,7 +14,13 @@ const server = new Elysia()
     name: 'jwt',
     secret: process.env.JWT_SECRET ?? 'default-secret'
   }))
-registerRoutes(server)
+
+// api routes
+registerAPIRoutes(server)
+
+// ws routes
+registerWebsocketRoutes(server)
+
 server.listen(port, () => {
   console.log(`Server is running on http://localhost:${port}`)
 })

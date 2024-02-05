@@ -4,8 +4,9 @@ import { addLoginRoutes } from './login'
 import { addPushRoutes } from './push';
 import { addRegisterRoutes } from "./register";
 import { addTemplateRoutes } from './template';
+import { addWebSocketRoutes } from './websocket';
 
-export default function registerRoutes(server: ServerType) {
+export function registerAPIRoutes(server: ServerType) {
   addRegisterRoutes('/register', server)
   addLoginRoutes('/login', server)
   // mock infobip sms api
@@ -22,4 +23,8 @@ export default function registerRoutes(server: ServerType) {
     addTemplateRoutes('/templates/:appId', app)
     return app
   })
+}
+
+export function registerWebsocketRoutes(server: ServerType) {
+  addWebSocketRoutes('/ws', server)
 }

@@ -1,5 +1,5 @@
 import { db } from "@/db";
-import { apps, messageTemplates, users } from "@/schema";
+import { apps, messageTemplates, users } from "@/db/schema";
 import type { UserClaims } from "@/types";
 import { DEFAULT_LIMIT } from "@/utils";
 import { and, desc, eq } from "drizzle-orm";

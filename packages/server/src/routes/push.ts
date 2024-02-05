@@ -1,12 +1,13 @@
 import { db } from "@/db";
-import { apps, messageTemplates, pushHistories, users } from "@/schema";
+import { apps, pushHistories } from "@/db/schema";
 import { and, eq } from "drizzle-orm";
 import { t } from "elysia";
 import type { ServerType } from "..";
+import { publishMessage } from "./websocket";
 
 export async function addPushRoutes(path: string, server: ServerType) {
   server.post(path, async ({ body, headers, set }) => {
-    const [type, token] = headers.Authorization.split(' ')
+    const [type, token] = headers.authorization.split(' ')
     if (type !== 'App') {
       set.status = 401
       return 'Invalid token'
@@ -15,13 +16,13 @@ export async function addPushRoutes(path: string, server: ServerType) {
       const { from, text, destinations } = message;
       const app = await db.query.apps.findFirst({
         where: and(eq(apps.appId, from), eq(apps.appSecret, token)),
-        with: {
-          messageTemplates: {
-            where: eq(messageTemplates.code, '1')
-          }
-        }
+        // with: {
+        //   messageTemplates: {
+        //     where: eq(messageTemplates.code, '1')
+        //   }
+        // }
       })
-      if (!app ||!app.messageTemplates) {
+      if (!app) {
         set.status = 403
         return 'Invalid app'
       }
@@ -32,7 +33,9 @@ export async function addPushRoutes(path: string, server: ServerType) {
         params: JSON.stringify({ code: phone }),
         text,
       }))
-      await db.insert(pushHistories).values(histories)
+      const ret = await db.insert(pushHistories).values(histories).returning()
+      publishMessage(from, phones, text)
+      return ret.length > 0
     })
   }, {
     body: t.Object({
@@ -45,7 +48,7 @@ export async function addPushRoutes(path: string, server: ServerType) {
       }))
     }),
     headers: t.Object({
-      Authorization: t.String()
+      authorization: t.String()
     })
   })
 }

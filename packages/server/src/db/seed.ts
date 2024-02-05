@@ -1,4 +1,4 @@
-import { db } from "./db";
+import { db } from "./";
 import * as schema from "./schema";
 
 await db.insert(schema.users).values([{

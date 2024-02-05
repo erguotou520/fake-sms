@@ -4,8 +4,8 @@
   "module": "src/index.ts",
   "scripts": {
     "migrate": "bun run src/migrate.ts",
-    "schema": "bunx drizzle-kit generate:sqlite --schema ./src/schema.ts",
-    "seed": "bun run src/seed.ts",
+    "schema": "bunx drizzle-kit generate:sqlite --schema ./src/db/schema.ts",
+    "seed": "bun run src/db/seed.ts",
     "start": "bun run src/index.ts"
   },
   "dependencies": {

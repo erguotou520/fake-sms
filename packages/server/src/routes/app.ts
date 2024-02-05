@@ -1,5 +1,5 @@
 import { db } from "@/db";
-import { apps } from "@/schema";
+import { apps } from "@/db/schema";
 import type { UserClaims } from "@/types";
 import { generateAppId, generateSecret } from "@/utils/app";
 import { and, eq } from "drizzle-orm";
