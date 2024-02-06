@@ -6,20 +6,20 @@ import type { ServerType } from "..";
 
 export async function addLoginRoutes(path: string, server: ServerType) {
   server.post(path, async ({ body, jwt, set }) => {
-    const existed = await db.query.users.findFirst({
-      where: eq(users.username, body.username)
-    })
-    if (!existed) {
+    const existed = await db.select().from(users).where(eq(users.username, body.username))
+
+    if (!existed.length) {
       set.status = 400
       return 'User not found'
     }
-    const verified = await Bun.password.verify(body.password, existed.hashedPassword)
+    const existedUser = existed[0]
+    const verified = await Bun.password.verify(body.password, existedUser.hashedPassword)
     if (!verified) {
       set.status = 400
       return 'Password is incorrect'
     }
     return {
-      token: await jwt.sign({ id: existed.id, nickname: existed.nickname! })
+      token: await jwt.sign({ id: existedUser.id, nickname: existedUser.nickname! })
     }
   }, {
     body: t.Object({

@@ -8,7 +8,7 @@
       "type": "bun",
       "internalConsoleOptions": "neverOpen",
       "request": "launch",
-      "name": "Debug File",
+      "name": "Debug server",
       "program": "src/index.ts",
       "cwd": "${workspaceFolder}/packages/server",
       "stopOnEntry": false,

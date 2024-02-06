@@ -1,9 +1,10 @@
-import { Elysia, t } from 'elysia'
+import type { Server } from 'bun';
+import { t } from 'elysia'
 import type { ServerType } from "..";
 
 const subscribeMap: Map<string, string[]> = new Map()
 
-let wsInstance: Parameters<NonNullable<Parameters<Elysia['ws']>[1]['drain']>>[0] | null = null
+let _server: ServerType
 
 /**
  * client -> { type: 'subscribe', data: { topics: ['13800138000'] } }
@@ -23,12 +24,6 @@ export async function addWebSocketRoutes(path: string, server: ServerType) {
         message: t.Optional(t.String())
       })
     }),
-    open: (ws) => {
-      if (!wsInstance) {
-        // @ts-ignore
-        wsInstance = ws
-      }
-    },
     message: async (ws, message) => {
       if (message.type === 'subscribe') {
         const { type, topics } = message.data
@@ -85,30 +80,20 @@ export async function addWebSocketRoutes(path: string, server: ServerType) {
       }
     }
   })
+  _server = server
 }
 
-export function publishMessage(appId: string, phones: string[], message: string) {
-  if (!wsInstance) {
-    return
-  }
+export async function publishMessage(appId: string, phones: string[], message: string) {
   for (const phone of phones) {
-    const data = {
+    const data = JSON.stringify({
       type: 'notification',
       data: {
         topic: phone,
         message
       }
-    }
-    wsInstance.publish(`sub:${phone}`, data)
-    wsInstance.publish(`sub-app:${appId}`, data)
-    wsInstance.publish('*', data)
-
-    // ws instance self channel
-    const channels = subscribeMap.get(wsInstance.id)
-    if (channels) {
-      if (channels.includes(`sub:${phone}`) || channels.includes(`sub-app:${appId}`) || channels.includes('*')) {
-        wsInstance.send(data)
-      }
-    }
+    })
+    _server.server?.publish(`sub:${phone}`, data)
+    _server.server?.publish(`sub-app:${appId}`, data)
+    _server.server?.publish('*', data)
   }
 }
