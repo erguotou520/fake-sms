@@ -12,7 +12,11 @@
   "devDependencies": {
     "@biomejs/biome": "^1.5.3",
     "@types/bun": "latest",
-    "oxlint": "^0.2.6"
+    "@unocss/cli": "^0.58.5",
+    "daisyui": "^4.6.2",
+    "oxlint": "^0.2.6",
+    "unocss": "^0.58.5",
+    "unocss-preset-daisy": "^7.0.0"
   },
   "peerDependencies": {
     "typescript": "^5.0.0"

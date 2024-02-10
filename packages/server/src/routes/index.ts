@@ -7,6 +7,7 @@ import { addTemplateRoutes } from './template';
 import { addWebSocketRoutes } from './websocket';
 
 export function registerAPIRoutes(server: ServerType) {
+  server.get('/health', () => ({ status: 'ok' } ))
   addRegisterRoutes('/register', server)
   addLoginRoutes('/login', server)
   // mock infobip sms api

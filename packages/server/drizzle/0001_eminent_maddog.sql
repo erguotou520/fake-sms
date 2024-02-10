@@ -1,1 +1,0 @@
-ALTER TABLE push_histories ADD `text` text;

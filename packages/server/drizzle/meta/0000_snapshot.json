@@ -1,7 +1,7 @@
 {
   "version": "5",
   "dialect": "sqlite",
-  "id": "6ba60a97-d3da-4457-a297-4f558f9e7135",
+  "id": "633bd956-7a28-4ffe-809f-4a8156777534",
   "prevId": "00000000-0000-0000-0000-000000000000",
   "tables": {
     "apps": {
@@ -180,11 +180,18 @@
           "autoincrement": false,
           "default": "(datetime('now', 'localtime'))"
         },
+        "app_id": {
+          "name": "app_id",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false
+        },
         "template_id": {
           "name": "template_id",
           "type": "text",
           "primaryKey": false,
-          "notNull": true,
+          "notNull": false,
           "autoincrement": false
         },
         "phone": {
@@ -200,10 +207,30 @@
           "primaryKey": false,
           "notNull": false,
           "autoincrement": false
+        },
+        "text": {
+          "name": "text",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false,
+          "autoincrement": false
         }
       },
       "indexes": {},
       "foreignKeys": {
+        "push_histories_app_id_apps_id_fk": {
+          "name": "push_histories_app_id_apps_id_fk",
+          "tableFrom": "push_histories",
+          "tableTo": "apps",
+          "columnsFrom": [
+            "app_id"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "no action",
+          "onUpdate": "no action"
+        },
         "push_histories_template_id_message_templates_id_fk": {
           "name": "push_histories_template_id_message_templates_id_fk",
           "tableFrom": "push_histories",

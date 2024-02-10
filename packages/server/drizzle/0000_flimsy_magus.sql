@@ -23,9 +23,12 @@ CREATE TABLE `push_histories` (
 	`id` text PRIMARY KEY NOT NULL,
 	`created_at` text DEFAULT (datetime('now', 'localtime')),
 	`updated_at` text DEFAULT (datetime('now', 'localtime')),
-	`template_id` text NOT NULL,
+	`app_id` text NOT NULL,
+	`template_id` text,
 	`phone` text NOT NULL,
 	`params` text,
+	`text` text,
+	FOREIGN KEY (`app_id`) REFERENCES `apps`(`id`) ON UPDATE no action ON DELETE no action,
 	FOREIGN KEY (`template_id`) REFERENCES `message_templates`(`id`) ON UPDATE no action ON DELETE no action
 );
 --> statement-breakpoint

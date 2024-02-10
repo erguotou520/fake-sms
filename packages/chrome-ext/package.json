@@ -7,7 +7,8 @@
   "scripts": {
     "dev": "plasmo dev",
     "build": "plasmo build",
-    "package": "plasmo package"
+    "package": "plasmo package",
+    "css": "unocss ./"
   },
   "dependencies": {
     "plasmo": "0.84.2",
@@ -24,8 +25,26 @@
     "typescript": "5.3.3"
   },
   "manifest": {
+    "web_accessible_resources": [
+      {
+        "resources": [
+          "assets/sms.png"
+        ],
+        "matches": [
+          "https://*/*",
+          "http://*/*"
+        ]
+      }
+    ],
     "host_permissions": [
-      "https://*/*"
+      "https://*/*",
+      "http://*/*"
+    ],
+    "permissions": [
+      "notifications",
+      "clipboardRead",
+      "clipboardWrite",
+      "scripting"
     ]
   }
 }

@@ -1,5 +1,6 @@
 import { db } from "@/db";
 import { apps, pushHistories } from "@/db/schema";
+import { v4 } from "@lukeed/uuid";
 import { and, eq } from "drizzle-orm";
 import { t } from "elysia";
 import type { ServerType } from "..";
@@ -14,27 +15,31 @@ export async function addPushRoutes(path: string, server: ServerType) {
     }
     body.messages.forEach(async (message) => {
       const { from, text, destinations } = message;
-      const app = await db.query.apps.findFirst({
+      const _apps = await db.query.apps.findMany({
         where: and(eq(apps.appId, from), eq(apps.appSecret, token)),
+        limit: 1,
         // with: {
         //   messageTemplates: {
         //     where: eq(messageTemplates.code, '1')
         //   }
         // }
       })
-      if (!app) {
+      if (!_apps?.length) {
         set.status = 403
         return 'Invalid app'
       }
+      const app = _apps[0]
       const phones = destinations.map(d => d.to)
       const histories = phones.map<typeof pushHistories.$inferInsert>(phone => ({
+        id: v4(),
         phone,
+        appId: app.id,
         templateId: '',
         params: JSON.stringify({ code: phone }),
         text,
       }))
       const ret = await db.insert(pushHistories).values(histories).returning()
-      publishMessage(from, phones, text)
+      publishMessage(from, phones, text, histories.map(h => h.id!))
       return ret.length > 0
     })
   }, {
