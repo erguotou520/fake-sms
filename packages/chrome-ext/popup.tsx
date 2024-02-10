@@ -1,6 +1,8 @@
 import { useCallback, useState } from "react"
 import type { SubscribeEvent, SubscribeEventData } from "~types"
 
+import './styles.css'
+
 function IndexPopup() {
   const [url, setUrl] = useState("")
   const [isUrlValid, setIsUrlValid] = useState<boolean>()
@@ -54,29 +56,29 @@ function IndexPopup() {
 
   return (
     <div>
-      <form onSubmit={onSubmit}>
-        <label>fake-sms server url:</label>
-        <input type="text" value={url} onChange={(e) => setUrl(e.target.value)} onBlur={(e) => testServer(e.target.value)} />
-        {isUrlValid === false && <div className="text-red-500">Invalid server url</div>}
-        <label className="mt-4">Listen type:</label>
-        <div>
-          <input type="radio" name="listenType" value="phone" onChange={() => setListenType("phone")} />
-          <input type="radio" name="listenType" value="app" onChange={() => setListenType("app")} />
-          <input type="radio" name="listenType" value="all" onChange={() => setListenType("all")} />
+      <form className="w-screen p-4" onSubmit={onSubmit}>
+        <label className="label mb-2">fake-sms server url:</label>
+        <input className="input" type="text" placeholder="eg: http://localhost:7878" value={url} onChange={(e) => setUrl(e.target.value)} onBlur={(e) => testServer(e.target.value)} />
+        {isUrlValid === false && <div className="mt-1 text-red-500">Invalid server url</div>}
+        <label className="label mt-4 mb-2">Listen type:</label>
+        <div className="tablist grid-cols-3">
+          <button type="button" className="tab" data-state={listenType === 'phone'? 'active' : 'inactive'} onClick={() => setListenType("phone")}>Phone</button>
+          <button type="button" className="tab" data-state={listenType === 'app'? 'active' : 'inactive'}  onClick={() => setListenType("app")}>Apps</button>
+          <button type="button" className="tab" data-state={listenType === 'all'? 'active' : 'inactive'}  onClick={() => setListenType("all")}>All</button>
         </div>
         {listenType == 'phone' ? (
           <>
-            <label className="mt-4">Listen phone numbers:</label>
-            <input type="text" value={phoneNumbers} placeholder="eg: 13800138000,13800138001" onChange={(e) => setPhoneNumbers(e.target.value)} />
+            <label className="label mt-4 mb-2">Listen phone numbers:</label>
+            <input className="input" type="text" value={phoneNumbers} placeholder="eg: 13800138000,13800138001" onChange={(e) => setPhoneNumbers(e.target.value)} />
           </>
         ) : listenType == 'app' ? (
           <>
-            <label className="mt-4">Listen apps:</label>
-            <input type="text" value={apps} placeholder="eg: QJhIneQFNcITXgqkyklQuVRXtJWBB5u4,wmDw8IQd6u9RmC5NCMiKEXBGBegeCFxH" onChange={(e) => setApps(e.target.value)} />
+            <label className="label mt-4 mb-2">Listen apps:</label>
+            <input className="input" type="text" value={apps} placeholder="eg: QJhIneQFNcITXgqkyklQuVRXtJWBB5u4,wmDw8IQd6u9RmC5NCMiKEXBGBegeCFxH" onChange={(e) => setApps(e.target.value)} />
           </>
         ) : null}
-        {errMsg && <div className="text-red-500">{errMsg}</div>}
-        <button type="submit" className="mt-4">Connect</button>
+        {errMsg && <div className="mt-1 text-red-500">{errMsg}</div>}
+        <button type="submit" className="btn my-4 w-full">Connect</button>
       </form>
     </div>
   )
