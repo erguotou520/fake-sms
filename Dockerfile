@@ -1,4 +1,4 @@
-FROM oven/bun:1 as builder
+FROM oven/bun:1-slim as builder
 WORKDIR /app
 COPY packages/server/package.json /app/package.json
 RUN bun install
@@ -6,7 +6,7 @@ COPY packages/server/ /app/
 RUN bun install
 
 # copy production dependencies and source code into final image
-FROM oven/bun:1 AS release
+FROM oven/bun:1-slim AS release
 WORKDIR /app
 COPY --from=builder /app/ /app/
 USER bun
