@@ -62,10 +62,7 @@
       "indexes": {
         "apps_app_id_app_secret_unique": {
           "name": "apps_app_id_app_secret_unique",
-          "columns": [
-            "app_id",
-            "app_secret"
-          ],
+          "columns": ["app_id", "app_secret"],
           "isUnique": true
         }
       },
@@ -74,12 +71,8 @@
           "name": "apps_creator_id_users_id_fk",
           "tableFrom": "apps",
           "tableTo": "users",
-          "columnsFrom": [
-            "creator_id"
-          ],
-          "columnsTo": [
-            "id"
-          ],
+          "columnsFrom": ["creator_id"],
+          "columnsTo": ["id"],
           "onDelete": "no action",
           "onUpdate": "no action"
         }
@@ -141,12 +134,8 @@
           "name": "message_templates_app_id_apps_id_fk",
           "tableFrom": "message_templates",
           "tableTo": "apps",
-          "columnsFrom": [
-            "app_id"
-          ],
-          "columnsTo": [
-            "id"
-          ],
+          "columnsFrom": ["app_id"],
+          "columnsTo": ["id"],
           "onDelete": "no action",
           "onUpdate": "no action"
         }
@@ -222,12 +211,8 @@
           "name": "push_histories_app_id_apps_id_fk",
           "tableFrom": "push_histories",
           "tableTo": "apps",
-          "columnsFrom": [
-            "app_id"
-          ],
-          "columnsTo": [
-            "id"
-          ],
+          "columnsFrom": ["app_id"],
+          "columnsTo": ["id"],
           "onDelete": "no action",
           "onUpdate": "no action"
         },
@@ -235,12 +220,8 @@
           "name": "push_histories_template_id_message_templates_id_fk",
           "tableFrom": "push_histories",
           "tableTo": "message_templates",
-          "columnsFrom": [
-            "template_id"
-          ],
-          "columnsTo": [
-            "id"
-          ],
+          "columnsFrom": ["template_id"],
+          "columnsTo": ["id"],
           "onDelete": "no action",
           "onUpdate": "no action"
         }
@@ -299,9 +280,7 @@
       "indexes": {
         "users_username_unique": {
           "name": "users_username_unique",
-          "columns": [
-            "username"
-          ],
+          "columns": ["username"],
           "isUnique": true
         }
       },

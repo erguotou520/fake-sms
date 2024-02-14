@@ -1,4 +1,4 @@
-export type UserClaims  = {
+export type UserClaims = {
   id: string
   nickname: string
 }

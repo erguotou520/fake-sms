@@ -5,19 +5,21 @@ export type MessageData = {
   createdAt: string
 }
 
-export type WebsocketReturnEventData = {
-  type: 'subscribe:success' | 'unsubscribe:success',
-  data: {
-    topics: string[]
-    message?: string
-  }
-} | {
-  type: 'notification',
-  data: MessageData
-}
+export type WebsocketReturnEventData =
+  | {
+      type: 'subscribe:success' | 'unsubscribe:success'
+      data: {
+        topics: string[]
+        message?: string
+      }
+    }
+  | {
+      type: 'notification'
+      data: MessageData
+    }
 
 export type SubscribeEventData = {
-  type: 'subscribe' | 'unsubscribe',
+  type: 'subscribe' | 'unsubscribe'
   data: SubscribeEvent
 }
 
@@ -25,9 +27,11 @@ export type SubscribeEvent = {
   url: string
 } & SubscribeData
 
-export type SubscribeData = {
-  type: 'phones' | 'apps'
-  topics: string[]
-} | {
-  type: 'all'
-}
+export type SubscribeData =
+  | {
+      type: 'phones' | 'apps'
+      topics: string[]
+    }
+  | {
+      type: 'all'
+    }

@@ -1,5 +1,5 @@
 import { t } from 'elysia'
-import type { ServerType } from "..";
+import type { ServerType } from '..'
 
 const subscribeMap: Map<string, string[]> = new Map()
 
@@ -68,7 +68,7 @@ export async function addWebSocketRoutes(path: string, server: ServerType) {
         ws.send({ type: 'unsubscribe:success', data: { topic: channels, message: 'Unsubscribed successfully' } })
       }
     },
-    close: (ws) => {
+    close: ws => {
       if (subscribeMap.has(ws.id)) {
         const channels = subscribeMap.get(ws.id)
         if (channels) {

@@ -1,4 +1,4 @@
-import type { SubscribeEvent, WebsocketReturnEventData } from "~types";
+import type { SubscribeEvent, WebsocketReturnEventData } from '~types'
 
 function copy(text: string) {
   navigator.clipboard.writeText(text)
@@ -12,11 +12,10 @@ chrome.notifications.getPermissionLevel(level => {
   }
 })
 
-
 function connectWebsocket(args: SubscribeEvent) {
-  const ws = new WebSocket(args.url.replace(/http/, 'ws').replace(/https/, 'wss') + '/ws')
+  const ws = new WebSocket(`${args.url.replace(/http/, 'ws').replace(/https/, 'wss')}/ws`)
   ws.onopen = () => {
-    ws.onmessage = (event) => {
+    ws.onmessage = event => {
       const data: WebsocketReturnEventData = JSON.parse(event.data)
       if (data.type === 'subscribe:success' || data.type === 'unsubscribe:success') {
         chrome.runtime.sendMessage(data)
@@ -31,32 +30,34 @@ function connectWebsocket(args: SubscribeEvent) {
         const matched = data.data.message.match(/\d+/)
         if (matched) {
           const number = matched[0]
-          const onClicked = (notificationId) => {
+          const onClicked = notificationId => {
             chrome.notifications.onClicked.removeListener(onClicked)
             if (notificationId === data.data.pushId) {
-              chrome.tabs.query({ active: true }, (tabs) => {
+              chrome.tabs.query({ active: true }, tabs => {
                 if (tabs.length) {
-                  chrome.scripting.executeScript({
-                    target: { tabId: tabs[0].id },
-                    func: copy,
-                    args: [number]
-                  }).catch(() => {}).then(resp => {
-                    chrome.notifications.clear(data.data.pushId)
-                  })
+                  chrome.scripting
+                    .executeScript({
+                      target: { tabId: tabs[0].id },
+                      func: copy,
+                      args: [number]
+                    })
+                    .catch(() => {})
+                    .then(resp => {
+                      chrome.notifications.clear(data.data.pushId)
+                    })
                 }
               })
             }
           }
           chrome.notifications.onClicked.addListener(onClicked)
         }
-
       }
     }
     ws.send(JSON.stringify({ type: 'subscribe', data: args }))
   }
 }
 
-chrome.runtime.onMessage.addListener((msg) => {
+chrome.runtime.onMessage.addListener(msg => {
   if (msg.type === 'subscribe') {
     connectWebsocket(msg.data)
   }

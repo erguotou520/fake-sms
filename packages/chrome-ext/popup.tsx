@@ -20,7 +20,7 @@ function IndexPopup() {
     // unsubscribe previous server
     const prevConfig = await storage.get<SubscribeEvent>('config')
     if (prevConfig) {
-      chrome.runtime.sendMessage<SubscribeEventData>({ type: "unsubscribe", data: prevConfig })
+      chrome.runtime.sendMessage<SubscribeEventData>({ type: 'unsubscribe', data: prevConfig })
       setMessages([])
     }
     // pull messages from server
@@ -44,24 +44,27 @@ function IndexPopup() {
           setMessages([msg.data, ...leftMessages])
         } else {
           showToast('Unknown message', {
-            textClassName: 'text-red-500',
+            textClassName: 'text-red-500'
           })
         }
       }
       chrome.runtime.onMessage.addListener(onMessage)
-      chrome.runtime.sendMessage<SubscribeEventData>({ type: "subscribe", data: args })
+      chrome.runtime.sendMessage<SubscribeEventData>({ type: 'subscribe', data: args })
     } catch (error) {
       console.error(error)
     }
   }
 
   useEffect(() => {
-    storage.get<SubscribeEvent>('config').catch(() => {}).then(config => {
-      if (config) {
-        setConfig(config)
-      }
-      setReady(true)
-    })
+    storage
+      .get<SubscribeEvent>('config')
+      .catch(() => {})
+      .then(config => {
+        if (config) {
+          setConfig(config)
+        }
+        setReady(true)
+      })
     autoTheme()
   }, [])
 
