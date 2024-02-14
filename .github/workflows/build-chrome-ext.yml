@@ -5,6 +5,7 @@ on:
     branches: [ "main" ]
     paths:
       - packages/chrome-ext/**
+      - .github/workflows/build-chrome-ext.yml
 
 defaults:
   run:

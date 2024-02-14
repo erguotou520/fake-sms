@@ -6,6 +6,7 @@ on:
     paths:
       - packages/server/**
       - Dockerfile
+      - .github/workflows/build-server.yml
 
 jobs:
   push_to_registry:
