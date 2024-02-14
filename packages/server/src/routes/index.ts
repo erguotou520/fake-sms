@@ -1,6 +1,7 @@
 import type { ServerType } from '..';
 import { addAppRoutes } from './app'
 import { addLoginRoutes } from './login'
+import { addMessagesRoutes } from './message';
 import { addPushRoutes } from './push';
 import { addRegisterRoutes } from "./register";
 import { addTemplateRoutes } from './template';
@@ -12,6 +13,8 @@ export function registerAPIRoutes(server: ServerType) {
   addLoginRoutes('/login', server)
   // mock infobip sms api
   addPushRoutes('/sms/2/text/advanced', server)
+  // get last n messages
+  addMessagesRoutes('/messages', server)
   server.group('/api', {
     async beforeHandle({ bearer, set }) {
       if (!bearer) {

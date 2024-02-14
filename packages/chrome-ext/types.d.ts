@@ -1,3 +1,10 @@
+export type MessageData = {
+  pushId: string
+  topic: string
+  message: string
+  createdAt: string
+}
+
 export type WebsocketReturnEventData = {
   type: 'subscribe:success' | 'unsubscribe:success',
   data: {
@@ -6,15 +13,11 @@ export type WebsocketReturnEventData = {
   }
 } | {
   type: 'notification',
-  data: {
-    pushId: string
-    topic: string
-    message: string
-  }
+  data: MessageData
 }
 
 export type SubscribeEventData = {
-  type: 'subscribe',
+  type: 'subscribe' | 'unsubscribe',
   data: SubscribeEvent
 }
 

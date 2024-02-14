@@ -48,24 +48,24 @@ export async function addWebSocketRoutes(path: string, server: ServerType) {
         console.log(`Subscribe ${ws.id} to ${channels}`)
         ws.send({ type: 'subscribe:success', data: { topic: channels, message: 'Subscribed successfully' } })
       } else if (message.type === 'unsubscribe') {
-        const { topics } = message.data
+        const { topics, type } = message.data
         const channels: string[] = []
-        if (topics!.length) {
-          if (topics!.includes('*')) {
-            channels.push('*')
-          } else {
-            channels.push(...topics!.map(topic => `sub:${topic}`))
-          }
-          for (const channel of channels) {
-            if (ws.isSubscribed(channel)) {
-              ws.unsubscribe(channel)
-            }
-          }
-          if (subscribeMap.has(ws.id)) {
-            subscribeMap.delete(ws.id)
-          }
-          ws.send({ type: 'unsubscribe:success', data: { topic: channels, message: 'Unsubscribed successfully' } })
+        if (type === 'all') {
+          channels.push('*')
+        } else if (type === 'apps') {
+          channels.push(...topics!.map(topic => `sub-app:${topic}`))
+        } else {
+          channels.push(...topics!.map(topic => `sub:${topic}`))
         }
+        for (const channel of channels) {
+          if (ws.isSubscribed(channel)) {
+            ws.unsubscribe(channel)
+          }
+        }
+        if (subscribeMap.has(ws.id)) {
+          subscribeMap.delete(ws.id)
+        }
+        ws.send({ type: 'unsubscribe:success', data: { topic: channels, message: 'Unsubscribed successfully' } })
       }
     },
     close: (ws) => {
@@ -84,13 +84,15 @@ export async function addWebSocketRoutes(path: string, server: ServerType) {
 }
 
 export async function publishMessage(appId: string, phones: string[], message: string, pushIds: string[]) {
+  const now = new Date().toLocaleString()
   for (const [index, phone] of phones.entries()) {
     const data = JSON.stringify({
       type: 'notification',
       data: {
         pushId: pushIds[index],
         topic: phone,
-        message
+        message,
+        createdAt: now
       }
     })
     _server.server?.publish(`sub:${phone}`, data)
