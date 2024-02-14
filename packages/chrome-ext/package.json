@@ -22,7 +22,8 @@
     "@types/react": "18.2.48",
     "@types/react-dom": "18.2.18",
     "@unocss/cli": "^0.58.5",
-    "typescript": "5.3.3"
+    "typescript": "5.3.3",
+    "unocss": "^0.58.5"
   },
   "manifest": {
     "web_accessible_resources": [

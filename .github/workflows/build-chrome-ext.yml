@@ -1,0 +1,50 @@
+name: "Build Chrome Extension"
+permissions: {}
+on:
+  push:
+    branches: [ "main" ]
+    paths:
+      - packages/chrome-ext/**
+
+defaults:
+  run:
+    working-directory: ./packages/chrome-ext
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v3
+      - name: Cache pnpm modules
+        uses: actions/cache@v3
+        with:
+          path: ~/.pnpm-store
+          key: ${{ runner.os }}-${{ hashFiles('**/pnpm-lock.yaml') }}
+          restore-keys: |
+            ${{ runner.os }}-
+      - uses: pnpm/action-setup@v2.2.4
+        with:
+          version: latest
+          run_install: true
+      - name: Use Node.js 16.x
+        uses: actions/setup-node@v3.4.1
+        with:
+          node-version: 16.x
+          cache: "pnpm"
+      - name: Build the extension
+        run: pnpm build --zip && pnpm build --target=edge-mv3 --zip && rm -rf build/chrome-mv3-prod build/edge-mv3-prod
+      - name: R2 Upload Action
+        uses: ryand56/r2-upload-action@latest
+        with:
+          r2-account-id: ${{ secrets.R2_ACCOUNT_ID }}
+          r2-access-key-id: ${{ secrets.R2_ACCESS_KEY_ID }}
+          r2-secret-access-key: ${{ secrets.R2_SECRET_ACCESS_KEY }}
+          r2-bucket: ${{ secrets.R2_BUCKET }}
+          source-dir: release
+          destination-dir: ./build
+      # - name: Browser Platform Publish
+      #   uses: PlasmoHQ/bpp@v3
+      #   with:
+      #     keys: ${{ secrets.SUBMIT_KEYS }}
+      #     artifact: build/chrome-mv3-prod.zip

@@ -6,7 +6,8 @@
     "migrate": "bun run src/db/migrate.ts",
     "schema": "bunx drizzle-kit generate:sqlite --schema ./src/db/schema.ts",
     "seed": "bun run src/db/seed.ts",
-    "start": "bun run src/index.ts"
+    "start": "bun run src/index.ts",
+    "build": "bun build ./src/index.ts --minify --compile --outfile fake-sms"
   },
   "dependencies": {
     "@elysiajs/bearer": "^0.8.0",
