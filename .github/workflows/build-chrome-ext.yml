@@ -17,24 +17,27 @@ jobs:
 
     steps:
       - uses: actions/checkout@v3
-      - name: Cache pnpm modules
-        uses: actions/cache@v3
-        with:
-          path: ~/.pnpm-store
-          key: ${{ runner.os }}-${{ hashFiles('**/pnpm-lock.yaml') }}
-          restore-keys: |
-            ${{ runner.os }}-
-      - uses: pnpm/action-setup@v2.2.4
-        with:
-          version: latest
-          run_install: true
-      - name: Use Node.js 16.x
-        uses: actions/setup-node@v3.4.1
-        with:
-          node-version: 16.x
-          cache: "pnpm"
+      - uses: oven-sh/setup-bun@v1
+      - name: Install dependencies
+        run: bun install
       - name: Build the extension
-        run: pnpm build --zip && pnpm build --target=edge-mv3 --zip && rm -rf build/chrome-mv3-prod build/edge-mv3-prod
+        run: bun run build --zip && bun run build --target=edge-mv3 --zip && rm -rf build/chrome-mv3-prod build/edge-mv3-prod
+      - name: get-npm-version
+        id: package-version
+        uses: martinbeentjes/npm-get-version-action@v1.3.1
+        with:
+          path: packages/chrome-ext
+      - name: R2 Upload Action
+        uses: ryand56/r2-upload-action@latest
+        with:
+          r2-account-id: ${{ secrets.R2_ACCOUNT_ID }}
+          r2-access-key-id: ${{ secrets.R2_ACCESS_KEY_ID }}
+          r2-secret-access-key: ${{ secrets.R2_SECRET_ACCESS_KEY }}
+          r2-bucket: ${{ secrets.R2_BUCKET }}
+          source-dir: packages/chrome-ext/build
+          destination-dir: ./${{ steps.package-version.outputs.current-version}}/
+      - name: Create version file
+        run: echo "${{ steps.package-version.outputs.current-version }}" > build/version.txt
       - name: R2 Upload Action
         uses: ryand56/r2-upload-action@latest
         with:
