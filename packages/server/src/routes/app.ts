@@ -2,7 +2,7 @@ import { db } from '@/db'
 import { apps } from '@/db/schema'
 import type { UserClaims } from '@/types'
 import { generateAppId, generateSecret } from '@/utils/app'
-import { and, eq } from 'drizzle-orm'
+import { and, count, eq } from 'drizzle-orm'
 import { t } from 'elysia'
 import type { APIGroupServerType } from '..'
 
@@ -12,17 +12,18 @@ export async function addAppRoutes(path: string, server: APIGroupServerType) {
     path,
     async ({ query, bearer, jwt }) => {
       const user = (await jwt.verify(bearer)) as UserClaims
-      const ret = await db.query.apps.findMany({
-        where: (apps, { eq }) => eq(apps.creatorId, user.id),
+      const list = await db.query.apps.findMany({
+        where: eq(apps.creatorId, user.id),
         offset: query.offset ?? 0,
         limit: query.limit ?? 10
       })
-      return ret
+      const total = await db.select({ value: count() }).from(apps).where(eq(apps.creatorId, user.id))
+      return { list, total: total[0].value }
     },
     {
       query: t.Object({
-        offset: t.Optional(t.Number()),
-        limit: t.Optional(t.Number())
+        offset: t.MaybeEmpty(t.Numeric()),
+        limit: t.MaybeEmpty(t.Numeric())
       })
     }
   )

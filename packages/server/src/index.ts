@@ -7,7 +7,11 @@ import { registerAPIRoutes, registerWebsocketRoutes } from './routes'
 
 const port = process.env.PORT || 7878
 const server = new Elysia()
-  .use(swagger())
+  .use(
+    swagger({
+      scalarCDN: 'https://cdnjs.cloudflare.com/ajax/libs/scalar-api-reference/1.16.2/standalone.min.js'
+    })
+  )
   .use(staticPlugin({ assets: 'html', prefix: '' }))
   .use(bearer())
   .use(

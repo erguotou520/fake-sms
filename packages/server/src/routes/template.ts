@@ -2,7 +2,7 @@ import { db } from '@/db'
 import { apps, messageTemplates, users } from '@/db/schema'
 import type { UserClaims } from '@/types'
 import { DEFAULT_LIMIT } from '@/utils'
-import { and, desc, eq } from 'drizzle-orm'
+import { and, count, desc, eq } from 'drizzle-orm'
 import { t } from 'elysia'
 import type { APIGroupServerType } from '..'
 
@@ -19,18 +19,22 @@ export async function addTemplateRoutes(path: string, server: APIGroupServerType
         set.status = 404
         return 'App not found'
       }
-      const templates = await db.query.messageTemplates.findMany({
-        where: and(eq(messageTemplates.appId, params.appId)),
+      const list = await db.query.messageTemplates.findMany({
+        where: eq(messageTemplates.appId, params.appId),
         orderBy: [desc(messageTemplates.createdAt)],
         offset: query.offset || 0,
         limit: query.limit || DEFAULT_LIMIT
       })
-      return templates
+      const total = await db
+        .select({ value: count() })
+        .from(messageTemplates)
+        .where(eq(messageTemplates.appId, params.appId))
+      return { list, total: total[0].value }
     },
     {
       query: t.Object({
-        offset: t.Optional(t.Number()),
-        limit: t.Optional(t.Number())
+        offset: t.MaybeEmpty(t.Numeric()),
+        limit: t.MaybeEmpty(t.Numeric())
       }),
       params: t.Object({
         appId: t.String()

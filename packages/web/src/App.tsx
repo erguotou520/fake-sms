@@ -1,31 +1,47 @@
-import { useState } from 'react'
-import viteLogo from '/vite.svg'
-import './App.css'
-import reactLogo from './assets/react.svg'
+import { ConfigProvider } from 'antd'
+import { Suspense, useEffect } from 'react'
+import { HashRouter as Router, useLocation, useNavigate, useRoutes } from 'react-router-dom'
+import routes from '~react-pages'
+import { AppRoutes } from './constants'
+import { useAuth } from './store'
 
 function App() {
-  const [count, setCount] = useState(0)
+  const { init: initAuth } = useAuth()
+
+  useEffect(() => {
+    initAuth()
+  }, [])
 
   return (
-    <>
-      <div>
-        <a href="https://vitejs.dev" target="_blank" rel="noreferrer">
-          <img src={viteLogo} className="logo" alt="Vite logo" />
-        </a>
-        <a href="https://react.dev" target="_blank" rel="noreferrer">
-          <img src={reactLogo} className="logo react" alt="React logo" />
-        </a>
-      </div>
-      <h1>Vite + React</h1>
-      <div className="card">
-        <button onClick={() => setCount(count => count + 1)}>count is {count}</button>
-        <p>
-          Edit <code>src/App.tsx</code> and save to test HMR
-        </p>
-      </div>
-      <p className="read-the-docs">Click on the Vite and React logos to learn more</p>
-    </>
+    <Router>
+      <ConfigProvider>
+        <_App />
+      </ConfigProvider>
+    </Router>
   )
+}
+
+function _App() {
+  const navigate = useNavigate()
+  const { pathname } = useLocation()
+  const {
+    ready,
+    computed: { logged }
+  } = useAuth()
+
+  useEffect(() => {
+    if (ready) {
+      if (!logged) {
+        if (pathname !== AppRoutes.Login || pathname !== AppRoutes.Register) {
+          navigate(AppRoutes.Login, { replace: true })
+        }
+      }
+    }
+  }, [ready, logged, pathname, navigate])
+
+  useEffect(() => {}, [])
+
+  return <Suspense fallback={null}>{useRoutes(routes)}</Suspense>
 }
 
 export default App

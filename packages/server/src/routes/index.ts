@@ -5,6 +5,7 @@ import { addMessagesRoutes } from './message'
 import { addPushRoutes } from './push'
 import { addRegisterRoutes } from './register'
 import { addTemplateRoutes } from './template'
+import { addUserRoutes } from './user'
 import { addWebSocketRoutes } from './websocket'
 
 export function registerAPIRoutes(server: ServerType) {
@@ -26,6 +27,7 @@ export function registerAPIRoutes(server: ServerType) {
       }
     },
     app => {
+      addUserRoutes('/user', app)
       addAppRoutes('/apps', app)
       addTemplateRoutes('/templates/:appId', app)
       return app
