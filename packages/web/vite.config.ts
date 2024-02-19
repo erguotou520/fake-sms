@@ -13,7 +13,11 @@ export default defineConfig({
   },
   server: {
     proxy: {
-      '^/(api|login|register)': 'http://localhost:7878'
+      '^/(api|login|register|messages)': 'http://localhost:7878',
+      '/ws': {
+        target: 'ws://localhost:7878',
+        ws: true
+      }
     }
   },
   plugins: [

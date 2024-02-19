@@ -3,5 +3,6 @@ export const AppRoutes = {
   Register: '/auth/register',
   Home: '/',
   Dashboard: '/dashboard',
-  AppList: '/dashboard/apps'
+  AppList: '/dashboard/apps',
+  PublicMessages: '/messages'
 }

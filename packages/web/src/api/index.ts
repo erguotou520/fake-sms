@@ -1,5 +1,6 @@
 import { CommonPagination, LoginForm, RegisterForm } from '@/types'
 import { onExpired } from '@/utils'
+import { message } from 'antd'
 
 const TOKEN_KEY = 'user.access_token'
 
@@ -33,13 +34,16 @@ export default async function request(url: string, init?: RequestInit) {
   })
   if (resp.status === 401) {
     onExpired()
+    message.error('Token expired!')
     return { error: true, message: 'Token expired', data: null }
   }
   if (resp.ok) {
     const data = await resp.json()
     return { error: false, message: null, data }
   }
-  return { error: true, message: resp.statusText, data: null }
+  const messageText = (await resp.text()) || resp.statusText
+  message.error(messageText)
+  return { error: true, message: messageText, data: null }
 }
 
 function appendParams(url: string, params: Record<string, string | number>) {

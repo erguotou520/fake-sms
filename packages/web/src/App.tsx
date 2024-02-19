@@ -14,7 +14,11 @@ function App() {
 
   return (
     <Router>
-      <ConfigProvider>
+      <ConfigProvider theme={{
+        token: {
+          colorPrimary: '#18181b'
+        }
+      }}>
         <_App />
       </ConfigProvider>
     </Router>
@@ -32,7 +36,7 @@ function _App() {
   useEffect(() => {
     if (ready) {
       if (!logged) {
-        if (pathname !== AppRoutes.Login && pathname !== AppRoutes.Register) {
+        if (pathname !== AppRoutes.Login && pathname !== AppRoutes.Register && pathname !== AppRoutes.PublicMessages) {
           navigate(AppRoutes.Login, { replace: true })
         }
       }

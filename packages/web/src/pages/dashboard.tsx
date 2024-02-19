@@ -2,7 +2,7 @@ import { AppRoutes } from '@/constants'
 import { useAuth } from '@/store'
 import { Dropdown, Modal } from 'antd'
 import { useEffect } from 'react'
-import { Outlet, useLocation, useNavigate } from 'react-router-dom'
+import { NavLink, Outlet, useLocation, useNavigate } from 'react-router-dom'
 
 const { useModal } = Modal
 
@@ -33,7 +33,7 @@ const DashboardLayout = () => {
     <div>
       <header className="h-15 flex items-center shadow">
         <div className="container max-w-240 px-2 mx-auto flex justify-between items-center">
-          <h1 className="text-2xl font-bold text-primary">Fake SMS</h1>
+          <NavLink to={AppRoutes.Dashboard} className="text-2xl font-bold text-primary">Fake SMS</NavLink>
           <Dropdown
             menu={{
               items: [{ key: 'logout', label: 'Logout', onClick: confirmLogout }]
