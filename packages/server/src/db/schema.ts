@@ -1,6 +1,6 @@
 import { v4 } from '@lukeed/uuid/secure'
 import { relations, sql } from 'drizzle-orm'
-import { sqliteTable, text, unique } from 'drizzle-orm/sqlite-core'
+import { integer, sqliteTable, text, unique } from 'drizzle-orm/sqlite-core'
 
 export function genUUID() {
   return text('id')
@@ -30,6 +30,10 @@ export const apps = sqliteTable(
     name: text('name'),
     appId: text('app_id').notNull(),
     appSecret: text('app_secret').notNull(),
+    // enable rate limit for each phone push
+    rateLimitEnabled: integer('rate_limit_enabled', { mode: 'boolean' }).default(false),
+    rateLimitCount: integer('rate_limit_count'),
+    rateLimitDuration: integer('rate_limit_duration'),
     creatorId: text('creator_id')
       .notNull()
       .references(() => users.id)

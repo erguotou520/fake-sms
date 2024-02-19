@@ -5,6 +5,9 @@ CREATE TABLE `apps` (
 	`name` text,
 	`app_id` text NOT NULL,
 	`app_secret` text NOT NULL,
+	`rate_limit_enabled` integer DEFAULT false,
+	`rate_limit_count` integer,
+	`rate_limit_duration` integer,
 	`creator_id` text NOT NULL,
 	FOREIGN KEY (`creator_id`) REFERENCES `users`(`id`) ON UPDATE no action ON DELETE no action
 );

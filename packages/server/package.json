@@ -1,13 +1,16 @@
 {
   "name": "fake-sms",
   "type": "module",
+  "version": "0.0.1",
   "module": "src/index.ts",
   "scripts": {
     "migrate": "bun run src/db/migrate.ts",
     "schema": "bunx drizzle-kit generate:sqlite --schema ./src/db/schema.ts",
     "seed": "bun run src/db/seed.ts",
-    "start": "bun run src/index.ts",
-    "build": "bun build ./src/index.ts --minify --compile --outfile fake-sms"
+    "dev": "bun run src/index.ts",
+    "start": "bun run dist/index.js",
+    "build": "bun build ./src/index.ts --target=bun --outdir dist",
+    "build:exec": "bun build ./src/index.ts --target=bun --minify --compile --outfile fake-sms"
   },
   "dependencies": {
     "@elysiajs/bearer": "^0.8.0",
@@ -15,6 +18,7 @@
     "@elysiajs/static": "^0.8.1",
     "@elysiajs/swagger": "^0.8.5",
     "@lukeed/uuid": "^2.0.1",
+    "dayjs": "^1.11.10",
     "drizzle-orm": "^0.29.3",
     "elysia": "^0.8.15"
   },

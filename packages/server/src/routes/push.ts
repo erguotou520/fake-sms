@@ -1,7 +1,8 @@
 import { db } from '@/db'
 import { apps, pushHistories } from '@/db/schema'
 import { v4 } from '@lukeed/uuid'
-import { and, eq } from 'drizzle-orm'
+import dayjs from 'dayjs'
+import { and, count, eq, gt } from 'drizzle-orm'
 import { t } from 'elysia'
 import type { ServerType } from '..'
 import { publishMessage } from './websocket'
@@ -33,6 +34,17 @@ export async function addPushRoutes(path: string, server: ServerType) {
         }
         const app = _apps[0]
         const phones = destinations.map(d => d.to)
+        // check all phones are not rate limited
+        for (const phone of phones) {
+          if (app.rateLimitEnabled && app.rateLimitCount && app.rateLimitDuration) {
+            const date = dayjs().subtract(app.rateLimitDuration,'minutes')
+            const pushedCount = await db.select({ value: count() }).from(pushHistories).where(and(eq(pushHistories.phone, phone), gt(pushHistories.createdAt, date.format('YYYY-MM-DD hh:mm:ss'))))
+            if (pushedCount.length > app.rateLimitCount) {
+              set.status = 429
+              return `Rate limit exceeded for ${phone}`
+            }
+          }
+        }
         const histories = phones.map<typeof pushHistories.$inferInsert>(phone => ({
           id: v4(),
           phone,
