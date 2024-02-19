@@ -5,8 +5,11 @@ on:
     branches: [ "main" ]
     paths:
       - packages/server/**
-      - Dockerfile
       - .github/workflows/build-server.yml
+
+defaults:
+  run:
+    working-directory: ./packages/server
 
 jobs:
   push_to_registry:
