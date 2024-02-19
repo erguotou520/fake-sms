@@ -16,35 +16,39 @@ export async function addPushRoutes(path: string, server: ServerType) {
         set.status = 401
         return 'Invalid token'
       }
-      // biome-ignore lint/complexity/noForEach: <explanation>
-      body.messages.forEach(async message => {
-        const { from, text, destinations } = message
+      const appMap: Record<string, typeof apps.$inferSelect> = {}
+      // check
+      for (const message of body.messages) {
+        const { from, destinations } = message
         const _apps = await db.query.apps.findMany({
           where: and(eq(apps.appId, from), eq(apps.appSecret, token)),
           limit: 1
-          // with: {
-          //   messageTemplates: {
-          //     where: eq(messageTemplates.code, '1')
-          //   }
-          // }
         })
         if (!_apps?.length) {
           set.status = 403
           return 'Invalid app'
         }
         const app = _apps[0]
-        const phones = destinations.map(d => d.to)
+        appMap[from] = app
         // check all phones are not rate limited
-        for (const phone of phones) {
+        for (const dest of destinations) {
+          const { to: phone } = dest
           if (app.rateLimitEnabled && app.rateLimitCount && app.rateLimitDuration) {
-            const date = dayjs().subtract(app.rateLimitDuration,'minutes')
-            const pushedCount = await db.select({ value: count() }).from(pushHistories).where(and(eq(pushHistories.phone, phone), gt(pushHistories.createdAt, date.format('YYYY-MM-DD hh:mm:ss'))))
-            if (pushedCount.length > app.rateLimitCount) {
+            const date = dayjs().subtract(app.rateLimitDuration, 'second')
+            const pushedCount = await db.select({ value: count() }).from(pushHistories).where(and(eq(pushHistories.phone, phone), gt(pushHistories.createdAt, date.format('YYYY-MM-DD HH:mm:ss'))))
+            if (pushedCount[0].value >= app.rateLimitCount) {
               set.status = 429
               return `Rate limit exceeded for ${phone}`
             }
           }
         }
+      }
+
+      // push
+      for (const message of body.messages) {
+        const { from, text, destinations } = message
+        const app = appMap[from]
+        const phones = destinations.map(d => d.to)
         const histories = phones.map<typeof pushHistories.$inferInsert>(phone => ({
           id: v4(),
           phone,
@@ -61,7 +65,7 @@ export async function addPushRoutes(path: string, server: ServerType) {
           histories.map(h => h.id!)
         )
         return ret.length > 0
-      })
+      }
     },
     {
       body: t.Object({

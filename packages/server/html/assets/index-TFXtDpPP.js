@@ -1,1 +1,0 @@
-import{u as r,a as u,r as n,A as t,j as o}from"./index-4ri4HEyq.js";const g=()=>{const e=r(),{computed:{logged:s},ready:a}=u();return n.useEffect(()=>{a&&e(s?t.Dashboard:t.Login)},[s,a,e]),o.jsxDEV(o.Fragment,{},void 0,!1,{fileName:"/Users/erguotou/workspace/erguotou/fake-sms/packages/web/src/pages/index.tsx",lineNumber:21,columnNumber:10},void 0)};export{g as default};

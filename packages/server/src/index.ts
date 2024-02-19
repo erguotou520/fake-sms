@@ -27,6 +27,13 @@ registerAPIRoutes(server)
 // ws routes
 registerWebsocketRoutes(server)
 
+// log requests
+server.onRequest(({ request }) => {
+  if (!request.url.startsWith('assets/')) {
+    console.log('Request:', request.method, request.url)
+  }
+})
+
 server.listen(port, () => {
   console.log(`Server is running on http://localhost:${port}`)
 })

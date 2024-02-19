@@ -4,7 +4,7 @@
   "type": "module",
   "scripts": {
     "dev": "bunx --bun vite",
-    "build": "bunx --bun vite build"
+    "build": "rm -rf ../server/html && bunx --bun vite build"
   },
   "dependencies": {
     "@ant-design/icons": "^5.3.0",
