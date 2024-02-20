@@ -174,4 +174,4 @@ dist
 # Finder (MacOS) folder config
 .DS_Store
 
-packages/server/db
+packages/server/db/sqlite.db
