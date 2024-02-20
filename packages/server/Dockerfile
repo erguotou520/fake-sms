@@ -6,7 +6,7 @@ COPY . .
 RUN bun run build
 RUN rm -rf src
 RUN rm -rf bun.lockb
-COPY src/db/ src/db/
+COPY ./src/db/ /app/src/db/
 RUN mkdir -p /app/db && chown -R 1000:1000 /app/db
 
 FROM oven/bun:1-slim AS release
