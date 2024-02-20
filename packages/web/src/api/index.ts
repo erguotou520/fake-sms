@@ -76,9 +76,16 @@ export function getApps(args: CommonPagination) {
   return request(appendParams('/api/apps', args))
 }
 
-export function createApp(data: { name: string }) {
+export function createApp(data: any) {
   return request('/api/apps', {
     method: 'POST',
+    body: JSON.stringify(data)
+  })
+}
+
+export function updateApp(id: string, data: any) {
+  return request(`/api/apps/${id}`, {
+    method: 'PUT',
     body: JSON.stringify(data)
   })
 }

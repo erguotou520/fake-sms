@@ -1,6 +1,6 @@
 import { getApps, removeApp } from '@/api'
 import { AppItem } from '@/types'
-import { CopyOutlined, DeleteOutlined, EditOutlined, PlusOutlined, SettingOutlined } from '@ant-design/icons'
+import { CopyOutlined, DeleteOutlined, EditOutlined, MessageOutlined, PlusOutlined, SettingOutlined } from '@ant-design/icons'
 import { usePagination } from 'ahooks'
 import { Button, Card, Drawer, Empty, Modal, Pagination, message as AntMessage } from 'antd'
 import { useRef } from 'react'
@@ -46,6 +46,14 @@ const AppsPage = () => {
     modalRef.current?.openModal()
   }
 
+  const editApp = (app: AppItem) => {
+    modalRef.current?.openModal(app)
+  }
+
+  const openMessages = (app: AppItem) => {
+    window.open(`#/messages?type=apps&topics=${app.id}`, `_${app.id}`)
+  }
+
   function copy(text?: string) {
     if (!text) return
     navigator.clipboard.writeText(text)
@@ -67,8 +75,9 @@ const AppsPage = () => {
             key={app.id}
             title={app.name}
             actions={[
-              // <EditOutlined className="cursor-pointer" onClick={() => setEditingApp(app)} />,
+              <EditOutlined className="cursor-pointer" onClick={() => editApp(app)} />,
               <SettingOutlined className="cursor-pointer" onClick={() => setViewingApp(app)} />,
+              <MessageOutlined className="cursor-pointer" onClick={() => openMessages(app)} />,
               <DeleteOutlined className="!hover:text-red-500 cursor-pointer" onClick={() => confirmDelete(app)} />
             ]}
           >

@@ -2,7 +2,7 @@ import { db } from '@/db'
 import { apps } from '@/db/schema'
 import type { UserClaims } from '@/types'
 import { generateAppId, generateSecret } from '@/utils/app'
-import { and, count, eq } from 'drizzle-orm'
+import { and, count, eq, sql } from 'drizzle-orm'
 import { t } from 'elysia'
 import type { APIGroupServerType } from '..'
 
@@ -74,6 +74,42 @@ export async function addAppRoutes(path: string, server: APIGroupServerType) {
     }
   )
 
+  // update a new app
+  server.put(
+    `${path}/:id`,
+    async ({ body, params, bearer, jwt, set }) => {
+      const user = (await jwt.verify(bearer)) as UserClaims
+      const app = await db.query.apps.findFirst({
+        where: and(eq(apps.id, params.id), eq(apps.creatorId, user.id))
+      })
+      if (!app) {
+        set.status = 404
+        return 'App not found'
+      }
+      try {
+        const ret = await db.update(apps).set({
+          ...body,
+          updatedAt: sql`(datetime('now', 'localtime'))`
+        }).where(eq(apps.id, params.id)).returning()
+        if (ret.length > 0) {
+          return ret[0]
+        }
+        return false
+      } catch (error) {
+        set.status = 400
+        return 'Failed to update app'
+      }
+    },
+    {
+      body: t.Object({
+        name: t.String(),
+        rateLimitEnabled: t.Boolean(),
+        rateLimitCount: t.MaybeEmpty(t.Numeric({ minimum: 1 })),
+        rateLimitDuration: t.MaybeEmpty(t.Numeric({ minimum: 1 }))
+      })
+    }
+  )
+
   // delete an app
   server.delete(`${path}/:id`, async ({ params, bearer, jwt, set }) => {
     const user = (await jwt.verify(bearer)) as UserClaims
@@ -81,6 +117,7 @@ export async function addAppRoutes(path: string, server: APIGroupServerType) {
       where: and(eq(apps.id, params.id), eq(apps.creatorId, user.id))
     })
     if (!app) {
+      set.status = 404
       return 'App not found'
     }
     try {

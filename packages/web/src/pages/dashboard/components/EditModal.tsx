@@ -1,4 +1,4 @@
-import { createApp } from '@/api'
+import { createApp, updateApp } from '@/api'
 import { useDisclosure } from '@/hooks'
 import { AppItem } from '@/types'
 import { useRequest } from 'ahooks'
@@ -46,7 +46,12 @@ const EditAppModal = ({ actionRef, onFinish }: EditAppModalProps) => {
       }
       let success = true
       if (isEdit) {
-        //
+        const { error } = await updateApp(app.id, values)
+        if (!error) {
+          message.success('App updated successfully')
+          form.resetFields()
+        }
+        success = !error
       } else {
         const { error } = await createApp(values)
         if (!error) {
@@ -71,9 +76,7 @@ const EditAppModal = ({ actionRef, onFinish }: EditAppModalProps) => {
       actionRef.current = {
         openModal: (app?: AppItem) => {
           setApp(app)
-          form.setFieldsValue({
-            name: app?.name
-          })
+          form.setFieldsValue(app)
           open()
         }
       }
