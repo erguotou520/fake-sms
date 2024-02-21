@@ -1,12 +1,14 @@
-import { ConfigProvider } from 'antd'
+import { ConfigProvider, theme as antdTheme } from 'antd'
 import { Suspense, useEffect } from 'react'
 import { HashRouter as Router, useLocation, useNavigate, useRoutes } from 'react-router-dom'
 import routes from '~react-pages'
 import { AppRoutes } from './constants'
+import { useTheme } from './hooks/theme'
 import { useAuth } from './store'
 
 function App() {
   const { init: initAuth } = useAuth()
+  const theme = useTheme()
 
   useEffect(() => {
     initAuth()
@@ -16,8 +18,9 @@ function App() {
     <Router>
       <ConfigProvider theme={{
         token: {
-          colorPrimary: '#18181b'
-        }
+          colorPrimary: '#18181b',
+        },
+        algorithm: theme === 'dark' ? antdTheme.darkAlgorithm : antdTheme.defaultAlgorithm
       }}>
         <_App />
       </ConfigProvider>

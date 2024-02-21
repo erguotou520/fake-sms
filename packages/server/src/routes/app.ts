@@ -68,8 +68,8 @@ export async function addAppRoutes(path: string, server: APIGroupServerType) {
       body: t.Object({
         name: t.String(),
         rateLimitEnabled: t.Boolean(),
-        rateLimitCount: t.MaybeEmpty(t.Numeric({ minimum: 1 })),
-        rateLimitDuration: t.MaybeEmpty(t.Numeric({ minimum: 1 }))
+        rateLimitCount: t.Optional(t.Numeric({ minimum: 1 })),
+        rateLimitDuration: t.Optional(t.Numeric({ minimum: 1 }))
       })
     }
   )
@@ -104,8 +104,8 @@ export async function addAppRoutes(path: string, server: APIGroupServerType) {
       body: t.Object({
         name: t.String(),
         rateLimitEnabled: t.Boolean(),
-        rateLimitCount: t.MaybeEmpty(t.Numeric({ minimum: 1 })),
-        rateLimitDuration: t.MaybeEmpty(t.Numeric({ minimum: 1 }))
+        rateLimitCount: t.Optional(t.Numeric({ minimum: 1 })),
+        rateLimitDuration: t.Optional(t.Numeric({ minimum: 1 }))
       })
     }
   )
