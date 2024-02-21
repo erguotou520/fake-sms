@@ -4,6 +4,17 @@ Mock SMS server for testing SMS-based applications. It can be used to reduce ent
 
 `fake-sms` is compatible for `Casdoor` [go-sms-sender](https://github.com/casdoor/go-sms-sender) by default.
 
+<table>
+  <tr>
+    <td>
+      <img src="./assets/screen1.png" width="300" />
+    </td>
+    <td>
+      <img src="./assets/notifications.png" width="300" />
+    </td>
+  </tr>
+</table>
+
 Try it out at [https://fake-sms.erguotou.me](https://fake-sms.erguotou.me)
 
 ## ✨ Features
