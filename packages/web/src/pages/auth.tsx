@@ -12,11 +12,11 @@ const AuthLayout = () => {
         <div className="font-medium text-white mr-5 min-h-40">
           <h1 className="text-5xl">Fake SMS</h1>
           <p className="mt-5">
-            Use <code className="inline-block bg-white rounded-md px-2 py-1 text-xs text-primary">fake sms</code> to mock
+            Use <code className="inline-block bg-background rounded-md px-2 py-1 text-xs text-primary">fake sms</code> to mock
             SMS messages for your web application.
           </p>
         </div>
-        <div className="w-100 bg-white rounded-md px-5 py-4">
+        <div className="w-100 bg-background rounded-md px-5 py-4">
           <Outlet />
         </div>
       </div>
