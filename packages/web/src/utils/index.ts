@@ -1,7 +1,8 @@
 import { removeToken } from '@/api'
+import { globalNavigate } from '@/components/GlobalHistory'
 import { AppRoutes } from '@/constants'
 
 export function onExpired() {
   removeToken()
-  window.location.href = `#/${AppRoutes.Login}`
+  globalNavigate(AppRoutes.Login, { replace: true })
 }

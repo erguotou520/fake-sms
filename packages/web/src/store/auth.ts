@@ -63,14 +63,14 @@ export const useAuth = create<AuthState>((set, get) => ({
   },
   async refreshMe() {
     const { user } = await fetchMe()
-    if (user) {
-      set({ user })
-      return user
+    set({ user })
+    if (!user) {
+      onExpired()
     }
-    onExpired()
-    return null
+    return user
   },
   logout() {
+    set({ user: null })
     onExpired()
   }
 }))

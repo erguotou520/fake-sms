@@ -1,5 +1,5 @@
+import { useAuth } from '@/store'
 import { CommonPagination, LoginForm, RegisterForm } from '@/types'
-import { onExpired } from '@/utils'
 import { message } from 'antd'
 
 const TOKEN_KEY = 'user.access_token'
@@ -33,7 +33,7 @@ export default async function request(url: string, init?: RequestInit) {
     ...init
   })
   if (resp.status === 401) {
-    onExpired()
+    useAuth.getState().logout()
     message.error('Token expired!')
     return { error: true, message: 'Token expired', data: null }
   }
